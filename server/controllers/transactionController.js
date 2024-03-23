@@ -38,6 +38,10 @@ export const getList = async (req, res) => {
   try {
     const { month , search = '', page = 1, perPage = 10 } = req.query;
 
+    if (!month) {
+      return res.status(400).json({ success: false, error: 'Please provide a valid month.' });
+    }
+
     const monthNumber = new Date(Date.parse(`1 ${month} 2000`)).getMonth() + 1;
 
     const MonthQuery = {
@@ -82,7 +86,11 @@ export const getList = async (req, res) => {
 
 export const getStatistics = async (req, res) => {
     try {
-        const { month = 'March' } = req.query;
+        const { month } = req.query;
+
+        if (!month) {
+          return res.status(400).json({ success: false, error: 'Please provide a valid month.' });
+        }
 
         const monthNumber = new Date(Date.parse(`1 ${month} 2000`)).getMonth() + 1;
 
@@ -118,7 +126,11 @@ export const getStatistics = async (req, res) => {
 
 export const barChart = async (req, res) => {
     try {
-      const { month = 'January' } = req.query;
+      const { month } = req.query;
+
+      if (!month) {
+        return res.status(400).json({ success: false, error: 'Please provide a valid month.' });
+      }
   
       const monthNumber = new Date(Date.parse(`1 ${month} 2000`)).getMonth() + 1;
       const MonthQuery = {
@@ -188,7 +200,11 @@ export const barChart = async (req, res) => {
 
 export const pieChart = async (req, res) => {
   try {
-    const { month = 'January' } = req.query;
+    const { month } = req.query;
+
+    if (!month) {
+      return res.status(400).json({ success: false, error: 'Please provide a valid month.' });
+    }
 
     const monthNumber = new Date(Date.parse(`1 ${month} 2000`)).getMonth() + 1;
     const MonthQuery = {
@@ -227,6 +243,33 @@ export const pieChart = async (req, res) => {
   }
 }
 
-export const getCombinedStatistics = async (req, res) => {
-  // after deployment we will add this controller
-}
+export const combineData = async (req, res) => {
+    const { month } = req.query;
+
+    if (!month) {
+        return res.status(400).json({ success: false, error: 'Please provide a valid month.' });
+    }
+
+    try {
+        const statisticsResponse = await axios.get(`https://roxiler-systems-challenge.onrender.com/api/v1/transactions/statistics?month=${month}`);
+        const statisticsData = statisticsResponse.data;
+
+        const barChartResponse = await axios.get(`https://roxiler-systems-challenge.onrender.com/api/v1/transactions/barchart?month=${month}`);
+        const barChartData = barChartResponse.data;
+
+        const pieChartResponse = await axios.get(`https://roxiler-systems-challenge.onrender.com/api/v1/transactions/piechart?month=${month}`);
+        const pieChartData = pieChartResponse.data;
+
+        return res.status(200).json({
+            success: true,
+            data: {
+              statistics: statisticsData,
+              barChart: barChartData,
+              pieChart: pieChartData
+            }
+        });
+    } catch (error) {
+        console.error('Error combining data:', error);
+        return res.status(500).json({ success: false, error: 'Failed to combine data.' });
+    }
+};

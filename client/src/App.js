@@ -65,28 +65,29 @@ function App() {
     <>
       <Center m={5}>
         <Flex w={{base:'100%',sm:'80%'}} direction={'column'} alignItems={'center'}>
-          <Heading>Transaction Dashboard</Heading>
+          <Heading my={5}>Transaction Dashboard</Heading>
           
-          <HStack w={{base:'100%',sm:'80%'}} py={5}>
-            <Input placeholder='Search...' onChange={(e) => handleSearchChange(e.target.value, selectedMonth)} />
-            <Select value={selectedMonth} onChange={(e) => handleMonthChange(e.target.value)}>
-              {months.length > 0 && months.map((month, index) => (
-                <option key={index} value={month}>{month}</option>
-              ))}
+          <Box display={{ base: 'block', md: 'flex' }} flexDirection={{ base: 'column', md: 'row' }} justifyContent={{ base: 'flex-start', md: 'space-between' }}w={'100%'} py={5}>
+            <Input placeholder='Search...' pr={{ base: 5, md: 0 }} w={{ base: '100%', md: '40%' }} onChange={(e) => handleSearchChange(e.target.value, selectedMonth)} mb={{ base: 5, md: 0 }} />
+            <Select value={selectedMonth} onChange={(e) => handleMonthChange(e.target.value)} w={{ base: '100%', md: '40%' }}>
+                {months.length > 0 && months.map((month, index) => (
+                    <option key={index} value={month}>{month}</option>
+                ))}
             </Select>
-          </HStack>
+          </Box>
+
 
           <Box maxH={'70vh'} w={'80vw'} overflowY={'auto'}>
             <Table variant="simple" w={'full'} size={{base:'sm', md:'md'}} >
               <Thead>
                 <Tr>
+                <Th position="sticky" top="0" zIndex="1" bg={'white'}>ID</Th>
                   <Th position="sticky" top="0" zIndex="1" bg={'white'}>Title</Th>
-                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Price</Th>
                   <Th position="sticky" top="0" zIndex="1" bg={'white'}>Description</Th>
-                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>ID</Th>
+                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Price</Th>
                   <Th position="sticky" top="0" zIndex="1" bg={'white'}>Category</Th>
-                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Image</Th>
                   <Th position="sticky" top="0" zIndex="1" bg={'white'}>Sold</Th>
+                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Image</Th>
                   <Th position="sticky" top="0" zIndex="1" bg={'white'}>Date of Sale</Th>
                 </Tr>
               </Thead>
@@ -210,7 +211,6 @@ const TableRow = ({ product }) => {
     >
       <Td>{product.id}</Td>
       <Td>{product.title}</Td>
-      <Td>{product.price}</Td>
       <Td>
         {showFullDescription ? (
           <>
@@ -224,11 +224,12 @@ const TableRow = ({ product }) => {
           </>
         )}
       </Td>
+      <Td>₹{product.price}</Td>
       <Td>{product.category}</Td>
+      <Td>{product.sold ? 'Sold' : 'Unsold'}</Td>
       <Td>
         <img src={product.image} alt={product.title} style={{ maxWidth: '60px' }} />
       </Td>
-      <Td>{product.sold ? 'Sold' : 'Unsold'}</Td>
       <Td>{new Date(product.dateOfSale).toDateString()}</Td>
     </Tr>
   );
