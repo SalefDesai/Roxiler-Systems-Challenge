@@ -1,4 +1,4 @@
-import { Box, Center, Flex, HStack, Input, Select, Text, Table, Thead, Tbody, Tr, Th, Td, Link, Heading } from '@chakra-ui/react';
+import { Box, Center, Flex, HStack, Input, Select, Text, Table, Thead, Tbody, Tr, Th, Td, Link, Heading, Spinner } from '@chakra-ui/react';
 import './App.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -15,6 +15,7 @@ function App() {
   const [pageNo,setPageNo] = useState(1);
   const [perPage,setPerPage] = useState(10);
   const [totalItems,setTotalItems] = useState(0);
+  const [loading,setLoading] = useState(false);
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -42,24 +43,37 @@ function App() {
   }
 
   useEffect(() => {
-    fetchListData('',months[new Date().getMonth()])
-    fetchStatistics(months[new Date().getMonth()])
-  },[])
+    const fetchData = async () => {
+      setLoading(true);
+      await Promise.all([
+        fetchListData('', months[new Date().getMonth()]),
+        fetchStatistics(months[new Date().getMonth()])
+      ]);
+      setLoading(false);
+    };
+  
+    fetchData();
+  }, []);
+  
 
   const handleSearchChange = (value) => {
     setSearch(value);
     clearTimeout(typingTimeout);
-    setTypingTimeout(setTimeout(() => {
-      // Make API call with search and selectedMonth values
-      fetchListData(value,selectedMonth);
+    setTypingTimeout(setTimeout(async () => {
+      setLoading(true);
+      await fetchListData(value, selectedMonth);
+      setLoading(false);
     }, 1000));
   };
-
+  
   const handleMonthChange = async(value) => {
+    setLoading(true);
     setSelectedMonth(value);
-    fetchListData(search,value);
-    fetchStatistics(value);
+    await fetchListData(search, value);
+    await fetchStatistics(value);
+    setLoading(false);
   };
+  
 
   return (
     <>
@@ -76,31 +90,37 @@ function App() {
             </Select>
           </Box>
 
-
-          <Box maxH={'70vh'} w={'80vw'} overflowY={'auto'}>
-            <Table variant="simple" w={'full'} size={{base:'sm', md:'md'}} >
-              <Thead>
-                <Tr>
-                <Th position="sticky" top="0" zIndex="1" bg={'white'}>ID</Th>
-                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Title</Th>
-                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Description</Th>
-                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Price</Th>
-                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Category</Th>
-                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Sold</Th>
-                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Image</Th>
-                  <Th position="sticky" top="0" zIndex="1" bg={'white'}>Date of Sale</Th>
-                </Tr>
-              </Thead>
-              <Tbody w={'100%'}>
-                {list.length > 0 ? (
-                  list.map((product) => <TableRow key={product.id} product={product} />)
-                ) : (
-                  <Text width={'100%'} textAlign={'center'} textColor={'red'} p={5} >No Data found.</Text>
-                )}
-              </Tbody>
-            </Table>
-          </Box>
-
+          {
+            loading ? (
+              <Center>
+                <Spinner size="xl" />
+              </Center>
+            ) : (
+              <Box maxH={'70vh'} w={'80vw'} overflowY={'auto'}>
+                <Table variant="simple" w={'full'} size={{base:'sm', md:'md'}} >
+                  <Thead>
+                    <Tr>
+                      <Th position="sticky" top="0" zIndex="1" bg={'white'}>ID</Th>
+                      <Th position="sticky" top="0" zIndex="1" bg={'white'}>Title</Th>
+                      <Th position="sticky" top="0" zIndex="1" bg={'white'}>Description</Th>
+                      <Th position="sticky" top="0" zIndex="1" bg={'white'}>Price</Th>
+                      <Th position="sticky" top="0" zIndex="1" bg={'white'}>Category</Th>
+                      <Th position="sticky" top="0" zIndex="1" bg={'white'}>Sold</Th>
+                      <Th position="sticky" top="0" zIndex="1" bg={'white'}>Image</Th>
+                      <Th position="sticky" top="0" zIndex="1" bg={'white'}>Date of Sale</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody w={'100%'}>
+                    {list.length > 0 ? (
+                      list.map((product) => <TableRow key={product.id} product={product} />)
+                    ) : (
+                      <Text width={'100%'} textAlign={'center'} textColor={'red'} p={5} >No Data found.</Text>
+                    )}
+                  </Tbody>
+                </Table>
+              </Box>
+            )
+          }
           
             <Flex width={'100%'} direction={'colum'} justify={'space-between'} py={4} b>
               <Text>Page No. : {pageNo}</Text>
