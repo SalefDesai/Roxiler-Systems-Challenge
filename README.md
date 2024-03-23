@@ -21,11 +21,15 @@ For deployment, Render.com and Netlify.com's free tier services were used. Pleas
   GET /api/v1/transactions/initializedb
 ```
 
+eg : https://roxiler-systems-challenge.onrender.com/api/v1/transactions/initializedb
+
 #### Get List of transactions
 
 ```http
   GET /api/v1/transactions/list
 ```
+
+eg : https://roxiler-systems-challenge.onrender.com/api/v1/transactions/list?month=January&search=gaming
 
 | Query_Parameter | Type     | Description                |
 | :-------------- | :------- | :------------------------- |
@@ -42,6 +46,8 @@ For deployment, Render.com and Netlify.com's free tier services were used. Pleas
   GET /api/v1/transactions/statistics
 ```
 
+eg : https://roxiler-systems-challenge.onrender.com/api/v1/transactions/statistics?month=January
+
 | Query_Parameter | Type     | Description                |
 | :-------------- | :------- | :------------------------- |
 | `month`  | `string` | **Required**. Gets statistics for ths specified month.|
@@ -54,9 +60,11 @@ For deployment, Render.com and Netlify.com's free tier services were used. Pleas
   GET /api/v1/transactions/barchart
 ```
 
+eg : https://roxiler-systems-challenge.onrender.com/api/v1/transactions/barchart?month=june
+
 | Query_Parameter | Type     | Description                |
 | :-------------- | :------- | :------------------------- |
-| `month`  | `string` | **Required**. Gets Bar chart month for specified month. |
+| `month`  | `string` | **Required**. Gets Bar chart for specified month. |
 
 
 #### Get Pie Chart
@@ -65,9 +73,24 @@ For deployment, Render.com and Netlify.com's free tier services were used. Pleas
   GET /api/v1/transactions/piechart
 ```
 
+eg : https://roxiler-systems-challenge.onrender.com/api/v1/transactions/piechart?month=may
+
 | Query_Parameter | Type     | Description                |
 | :-------------- | :------- | :------------------------- |
-| `month`  | `string` | **Required**. Gets pie chart month for specified month. |
+| `month`  | `string` | **Required**. Gets pie chart for specified month. |
+
+
+#### Get all data using single api
+
+```http
+  GET /api/v1/transactions/piechart
+```
+
+eg : https://roxiler-systems-challenge.onrender.com/api/v1/transactions/combined-data?month=January
+
+| Query_Parameter | Type     | Description                |
+| :-------------- | :------- | :------------------------- |
+| `month`  | `string` | **Required**. Gets combined data for specified month. |
 
 
 
